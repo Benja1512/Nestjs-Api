@@ -1,33 +1,35 @@
-import {Controller, Get, Post, Param, Body, Put, Delete} from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
+import { LibrosService } from './libros.service';
 import { CrearLibroDto } from './dto/crear-libros.dto';
-
+import { libro, Libro } from './interfaces/libros.interface';
 
 @Controller('libros')
 export class LibrosController {
-    @Get()
-    buscarLibros(){
-        return 'Aqui se listara todos los libros'
-    }
 
-    @Get(':id')
-    infoLibro(@Param ('id') id:number):string {
-        return `esta es la informacion del libro #${id}`;
+  constructor(private librosService: LibrosService) {}
 
-    }
+  @Get()
+  buscarLibros(): Libro[] {
+    return this.librosService.listarTodo();
+  }
 
-    @Post()
-    crearLibro(@Body() infoLibro: CrearLibroDto):string {
-       return `un nuevo libro ha sido creado. Este libro tiene ${infoLibro.pags} paginas.`;
-    }
+  @Get(':id')
+  infoLibro(@Param('id') id: string): Libro {
+    return this.librosService.infoLibro(parseInt(id));
+  }
 
-    @Put(':id')
-    editarLibro(@Param('id')id: number, @Body() ActualizarLibro: CrearLibroDto): string {
-        return `el libro de id #${id} se ha actualizado`;
-    }
+  @Post()
+  crearLibro(@Body() infoLibro: CrearLibroDto): void {
+    this.librosService.crearLibro(infoLibro);
+  }
 
-    @Delete(':id')
-    eliminarLiro(@Param('id') id: number):string {
-        return `el libro de id #${id} se ha eliminado`;
-    }
+  @Put(':id')
+  editarLibro(@Param('id') id: string, @Body() actualizarLibro: Libro): void {
+    this.librosService.editarlibro(parseInt(id), actualizarLibro);
+  }
 
+  @Delete(':id')
+  eliminarLibro(@Param('id') id: string): void {
+    this.librosService.eliminarlibro(parseInt(id));
+  }
 }
